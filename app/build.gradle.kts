@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "DISCOGS_TOKEN", "\"NtClzBOwDWtWOOtpoDVxBChXkDuqVjLScNgwmAox\"")
-        buildConfigField("Int", "MAX_RECORDS", "500")
+        buildConfigField("int", "MAX_RECORDS", "500")
     }
 
     buildTypes {
