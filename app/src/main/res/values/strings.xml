@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Opas Vinyl-Sammlung</string>
+    <string name="tab_collection">Sammlung</string>
+    <string name="tab_wishlist">Wunschliste</string>
+    <string name="tab_stats">Statistik</string>
+    <string name="add_record">Platte hinzufügen</string>
+    <string name="search_hint">Künstler oder Titel suchen…</string>
+    <string name="scan_barcode">Barcode scannen</string>
+    <string name="search_discogs">Auf Discogs suchen</string>
+    <string name="no_records">Noch keine Platten in der Sammlung</string>
+    <string name="no_wishlist">Die Wunschliste ist leer</string>
+    <string name="archive">Archivieren</string>
+    <string name="unarchive">Wiederherstellen</string>
+    <string name="delete">Löschen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="tracklist">Titelliste</string>
+    <string name="total_duration">Gesamtlaufzeit</string>
+    <string name="release_year">Erscheinungsjahr</string>
+    <string name="genre">Genre</string>
+    <string name="label">Label</string>
+    <string name="condition">Zustand</string>
+    <string name="notes">Notizen</string>
+    <string name="collection_full">Sammlung voll (500/500)</string>
+    <string name="records_count">%d von 500 Platten</string>
+    <string name="show_archived">Archiv anzeigen</string>
+    <string name="mark_as_owned">Als vorhanden markieren</string>
+    <string name="move_to_wishlist">Auf Wunschliste setzen</string>
+</resources>
