@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Vinyl record outer ring -->
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M54,54m-36,0a36,36 0,1 1,72 0a36,36 0,1 1,-72 0" />
+
+    <!-- Grooves - outer -->
+    <path
+        android:fillColor="#2A2A2A"
+        android:pathData="M54,54m-32,0a32,32 0,1 1,64 0a32,32 0,1 1,-64 0" />
+
+    <!-- Grooves - mid -->
+    <path
+        android:fillColor="#222222"
+        android:pathData="M54,54m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+
+    <!-- Grooves - inner -->
+    <path
+        android:fillColor="#2A2A2A"
+        android:pathData="M54,54m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+
+    <!-- Label area (gold/warm tone) -->
+    <path
+        android:fillColor="#C8A961"
+        android:pathData="M54,54m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
+
+    <!-- Label inner ring -->
+    <path
+        android:fillColor="#B8963E"
+        android:pathData="M54,54m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
+
+    <!-- Center hole -->
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M54,54m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+
+    <!-- Shine/reflection effect -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.08"
+        android:pathData="M54,18 Q72,36 72,54 Q72,72 54,90 Q36,72 36,54 Q36,36 54,18z" />
+
+</vector>
