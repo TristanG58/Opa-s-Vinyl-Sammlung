@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Opa's Vinyl-Sammlung - App Vorschau</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --brown: #5D4037;
+    --brown-light: #8B6B61;
+    --brown-dark: #321911;
+    --gold: #D4A854;
+    --gold-light: #E8C97A;
+    --cream: #FFF8E1;
+    --cream-dark: #F5E6C8;
+    --black: #1A1A1A;
+    --white: #FFFDF7;
+    --red: #C62828;
+    --green: #2E7D32;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: var(--black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    color: var(--gold);
+    font-size: 28px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .subtitle {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .screen-label {
+    color: var(--gold);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 30px 0 12px;
+    text-align: center;
+  }
+
+  .phone {
+    width: 360px;
+    max-width: 100%;
+    background: var(--cream);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+  }
+
+  /* Top App Bar */
+  .topbar {
+    background: var(--brown);
+    color: var(--cream);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .topbar .back { font-size: 22px; opacity: 0.9; }
+  .topbar .dots { margin-left: auto; font-size: 20px; }
+
+  /* Bottom Nav */
+  .bottomnav {
+    background: var(--brown);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 12px;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    color: var(--cream);
+    opacity: 0.7;
+  }
+  .nav-item.active { color: var(--gold); opacity: 1; }
+  .nav-item svg { width: 24px; height: 24px; }
+  .nav-icon { font-size: 22px; }
+
+  /* Content */
+  .content { padding: 0; }
+
+  /* Library Header */
+  .lib-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .lib-header h2 { font-size: 22px; font-weight: 700; color: var(--black); }
+  .lib-header .count { font-size: 13px; color: var(--brown-light); }
+  .lib-header .archive-btn {
+    font-size: 13px;
+    color: var(--brown);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Search bar */
+  .searchbar {
+    margin: 0 16px 8px;
+    background: var(--white);
+    border: 1.5px solid var(--brown-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--brown-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Genre chips */
+  .chips {
+    display: flex;
+    gap: 8px;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+  }
+  .chip {
+    background: var(--cream-dark);
+    border: 1px solid var(--brown-light);
+    border-radius: 16px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--brown);
+    white-space: nowrap;
+  }
+  .chip.active {
+    background: var(--brown);
+    color: var(--cream);
+    border-color: var(--brown);
+  }
+
+  /* Record Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 8px 16px 16px;
+  }
+  .grid-item {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .grid-item .cover {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    background: var(--cream-dark);
+  }
+  .grid-item .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .grid-item .info {
+    padding: 8px;
+  }
+  .grid-item .title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .grid-item .artist {
+    font-size: 11px;
+    color: var(--brown-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .grid-item .year {
+    font-size: 11px;
+    color: var(--brown-light);
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 70px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+    background: var(--gold);
+    color: var(--brown);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+
+  .screen-container { position: relative; }
+
+  /* Detail Screen */
+  .detail-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .detail-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .detail-body { padding: 16px; }
+  .detail-title { font-size: 22px; font-weight: 700; }
+  .detail-artist { font-size: 17px; color: var(--brown-light); margin-bottom: 12px; }
+
+  .condition-badge {
+    display: inline-block;
+    background: #2E7D32;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--cream-dark);
+    margin: 12px 0;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+  .meta-row .label { color: var(--brown-light); }
+
+  .track-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+  .track-row .pos { color: var(--brown-light); width: 30px; }
+  .track-row .dur { color: var(--brown-light); }
+  .section-title { font-size: 15px; font-weight: 600; margin: 4px 0 8px; }
+
+  /* Stats */
+  .stat-cards {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+  }
+  .stat-card {
+    flex: 1;
+    border-radius: 12px;
+    padding: 16px 8px;
+    text-align: center;
+    color: var(--white);
+  }
+  .stat-card .num { font-size: 28px; font-weight: 700; }
+  .stat-card .lbl { font-size: 11px; opacity: 0.9; }
+  .stat-card.green { background: var(--green); }
+  .stat-card.gold { background: var(--gold); }
+  .stat-card.brown { background: var(--brown); }
+
+  .capacity-card {
+    margin: 0 16px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .capacity-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .capacity-header .t { font-weight: 600; }
+  .progress-track {
+    height: 12px;
+    background: var(--gold-light);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 6px;
+  }
+
+  .bar-card {
+    margin: 16px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .bar-label { width: 75px; flex-shrink: 0; }
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: var(--gold-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .bar-fill.gold { background: var(--gold); }
+  .bar-fill.brown { background: var(--brown); }
+  .bar-count { width: 24px; text-align: right; }
+
+  /* Add Screen */
+  .add-body { padding: 16px; }
+  .add-section { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .add-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .add-btn.primary {
+    background: var(--gold);
+    color: var(--brown);
+  }
+  .add-btn.outline {
+    background: transparent;
+    color: var(--brown);
+    border: 1.5px solid var(--brown-light);
+  }
+  .add-btn.save {
+    background: var(--brown);
+    color: var(--cream);
+    margin-top: 8px;
+  }
+  .input-field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--brown-light);
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 8px;
+    background: var(--white);
+    color: var(--black);
+  }
+  .input-label {
+    font-size: 12px;
+    color: var(--brown-light);
+    margin-bottom: 2px;
+  }
+
+  /* Search Screen */
+  .search-result {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    align-items: center;
+  }
+  .search-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    background: var(--cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 32px;
+  }
+  .search-info { flex: 1; min-width: 0; }
+  .search-info .t { font-size: 14px; font-weight: 600; }
+  .search-info .s { font-size: 12px; color: var(--brown-light); }
+</style>
+</head>
+<body>
+
+<h1>Opa's Vinyl-Sammlung</h1>
+<p class="subtitle">App-Vorschau - So sieht die App auf Android aus</p>
+
+<!-- ============ SCREEN 1: SAMMLUNG ============ -->
+<p class="screen-label">Sammlung (Hauptseite)</p>
+<div class="phone screen-container">
+  <div class="content">
+    <div class="lib-header">
+      <div>
+        <h2>Meine Sammlung</h2>
+        <span class="count">12 von 500 Platten</span>
+      </div>
+      <div class="archive-btn">Archiv</div>
+    </div>
+    <div class="searchbar">
+      <span>&#128269;</span>
+      <span>Kuenstler oder Titel suchen...</span>
+    </div>
+    <div class="chips">
+      <div class="chip active">Rock</div>
+      <div class="chip">Jazz</div>
+      <div class="chip">Klassik</div>
+      <div class="chip">Electronic</div>
+      <div class="chip">Blues</div>
+    </div>
+    <div class="grid">
+      <div class="grid-item">
+        <div class="cover" style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); color: white; font-size: 14px; flex-direction: column; font-weight: 600;">
+          <div style="font-size: 40px; margin-bottom: 4px;">&#127926;</div>
+          <div>Dark Side</div>
+          <div style="font-size: 11px; opacity: 0.7;">of the Moon</div>
+        </div>
+        <div class="info">
+          <div class="title">The Dark Side of the Moon</div>
+          <div class="artist">Pink Floyd</div>
+          <div class="year">1973</div>
+        </div>
+      </div>
+      <div class="grid-item">
+        <div class="cover" style="background: linear-gradient(135deg, #2d1b69, #11998e); color: white; font-size: 14px; flex-direction: column; font-weight: 600;">
+          <div style="font-size: 40px; margin-bottom: 4px;">&#127911;</div>
+          <div>Abbey Road</div>
+        </div>
+        <div class="info">
+          <div class="title">Abbey Road</div>
+          <div class="artist">The Beatles</div>
+          <div class="year">1969</div>
+        </div>
+      </div>
+      <div class="grid-item">
+        <div class="cover" style="background: linear-gradient(135deg, #b71c1c, #e65100); color: white; font-size: 14px; flex-direction: column; font-weight: 600;">
+          <div style="font-size: 40px; margin-bottom: 4px;">&#127928;</div>
+          <div>Kind of Blue</div>
+        </div>
+        <div class="info">
+          <div class="title">Kind of Blue</div>
+          <div class="artist">Miles Davis</div>
+          <div class="year">1959</div>
+        </div>
+      </div>
+      <div class="grid-item">
+        <div class="cover" style="background: linear-gradient(135deg, #1b5e20, #4caf50); color: white; font-size: 14px; flex-direction: column; font-weight: 600;">
+          <div style="font-size: 40px; margin-bottom: 4px;">&#127932;</div>
+          <div>Rumours</div>
+        </div>
+        <div class="info">
+          <div class="title">Rumours</div>
+          <div class="artist">Fleetwood Mac</div>
+          <div class="year">1977</div>
+        </div>
+      </div>
+    </div>
+    <div class="fab">+</div>
+  </div>
+  <div class="bottomnav">
+    <div class="nav-item active">
+      <span class="nav-icon">&#128191;</span>
+      <span>Sammlung</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#10084;</span>
+      <span>Wunschliste</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#128202;</span>
+      <span>Statistik</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2: DETAIL ============ -->
+<p class="screen-label">Detailansicht</p>
+<div class="phone">
+  <div class="topbar">
+    <span class="back">&larr;</span>
+    Details
+    <span class="dots">&#8942;</span>
+  </div>
+  <div class="content">
+    <div class="detail-cover" style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); color: white; font-size: 80px;">
+      &#127926;
+    </div>
+    <div class="detail-body">
+      <div class="detail-title">The Dark Side of the Moon</div>
+      <div class="detail-artist">Pink Floyd</div>
+      <div class="condition-badge">Near Mint (NM)</div>
+
+      <div class="divider"></div>
+
+      <div class="meta-row"><span class="label">Erscheinungsjahr</span><span>1973</span></div>
+      <div class="meta-row"><span class="label">Genre</span><span>Rock</span></div>
+      <div class="meta-row"><span class="label">Stil</span><span>Prog Rock</span></div>
+      <div class="meta-row"><span class="label">Label</span><span>Harvest</span></div>
+      <div class="meta-row"><span class="label">Katalognr.</span><span>SHVL 804</span></div>
+      <div class="meta-row"><span class="label">Format</span><span>LP (Album)</span></div>
+      <div class="meta-row"><span class="label">Land</span><span>UK</span></div>
+      <div class="meta-row"><span class="label">Gesamtlaufzeit</span><span>42:49</span></div>
+      <div class="meta-row"><span class="label">Status</span><span>In Sammlung</span></div>
+
+      <div class="divider"></div>
+      <div class="section-title">Titelliste</div>
+      <div class="track-row"><span class="pos">A1</span><span style="flex:1">Speak to Me</span><span class="dur">1:05</span></div>
+      <div class="track-row"><span class="pos">A2</span><span style="flex:1">Breathe</span><span class="dur">2:49</span></div>
+      <div class="track-row"><span class="pos">A3</span><span style="flex:1">On the Run</span><span class="dur">3:36</span></div>
+      <div class="track-row"><span class="pos">A4</span><span style="flex:1">Time</span><span class="dur">7:06</span></div>
+      <div class="track-row"><span class="pos">A5</span><span style="flex:1">The Great Gig in the Sky</span><span class="dur">4:44</span></div>
+      <div class="track-row"><span class="pos">B1</span><span style="flex:1">Money</span><span class="dur">6:23</span></div>
+      <div class="track-row"><span class="pos">B2</span><span style="flex:1">Us and Them</span><span class="dur">7:49</span></div>
+      <div class="track-row"><span class="pos">B3</span><span style="flex:1">Any Colour You Like</span><span class="dur">3:26</span></div>
+      <div class="track-row"><span class="pos">B4</span><span style="flex:1">Brain Damage</span><span class="dur">3:50</span></div>
+      <div class="track-row"><span class="pos">B5</span><span style="flex:1">Eclipse</span><span class="dur">2:01</span></div>
+
+      <div class="divider"></div>
+      <div class="section-title">Notizen</div>
+      <div style="font-size: 13px; color: var(--brown-light);">Original UK Pressing, leichte Gebrauchsspuren auf der Huelle</div>
+      <div style="height: 24px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: HINZUFUEGEN ============ -->
+<p class="screen-label">Platte hinzufuegen</p>
+<div class="phone">
+  <div class="topbar">
+    <span class="back">&larr;</span>
+    Platte hinzufuegen
+  </div>
+  <div class="add-body">
+    <div class="add-section">Automatisch suchen</div>
+    <button class="add-btn primary">&#128269; Auf Discogs suchen</button>
+    <button class="add-btn outline">&#128247; Barcode scannen</button>
+
+    <div style="height: 16px;"></div>
+    <div class="add-section">Oder manuell eingeben</div>
+
+    <div class="input-label">Kuenstler *</div>
+    <input class="input-field" value="Led Zeppelin" readonly>
+
+    <div class="input-label">Titel *</div>
+    <input class="input-field" value="Led Zeppelin IV" readonly>
+
+    <div class="input-label">Erscheinungsjahr</div>
+    <input class="input-field" value="1971" readonly>
+
+    <div class="input-label">Genre</div>
+    <input class="input-field" value="Rock" readonly>
+
+    <div class="input-label">Label</div>
+    <input class="input-field" value="Atlantic" readonly>
+
+    <div class="input-label">Format</div>
+    <input class="input-field" value="LP" readonly>
+
+    <button class="add-btn save">Speichern</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 4: DISCOGS SUCHE ============ -->
+<p class="screen-label">Discogs-Suche</p>
+<div class="phone">
+  <div class="topbar">
+    <span class="back">&larr;</span>
+    Discogs-Suche
+  </div>
+  <div style="padding: 16px;">
+    <div class="searchbar" style="margin: 0 0 16px;">
+      <span>&#128269;</span>
+      <span style="color: var(--black);">Pink Floyd</span>
+    </div>
+
+    <div class="search-result">
+      <div class="search-thumb" style="background: linear-gradient(135deg, #1a1a2e, #0f3460); color: white;">&#127926;</div>
+      <div class="search-info">
+        <div class="t">Pink Floyd - The Dark Side Of The Moon</div>
+        <div class="s">1973</div>
+        <div class="s">Harvest</div>
+        <div class="s">Vinyl, LP, Album</div>
+      </div>
+    </div>
+    <div class="search-result">
+      <div class="search-thumb" style="background: linear-gradient(135deg, #b71c1c, #880e4f); color: white;">&#127926;</div>
+      <div class="search-info">
+        <div class="t">Pink Floyd - The Wall</div>
+        <div class="s">1979</div>
+        <div class="s">Harvest</div>
+        <div class="s">Vinyl, 2xLP, Album</div>
+      </div>
+    </div>
+    <div class="search-result">
+      <div class="search-thumb" style="background: linear-gradient(135deg, #1b5e20, #004d40); color: white;">&#127926;</div>
+      <div class="search-info">
+        <div class="t">Pink Floyd - Wish You Were Here</div>
+        <div class="s">1975</div>
+        <div class="s">Harvest</div>
+        <div class="s">Vinyl, LP, Album</div>
+      </div>
+    </div>
+    <div class="search-result">
+      <div class="search-thumb" style="background: linear-gradient(135deg, #e65100, #ff8f00); color: white;">&#127926;</div>
+      <div class="search-info">
+        <div class="t">Pink Floyd - Animals</div>
+        <div class="s">1977</div>
+        <div class="s">Harvest</div>
+        <div class="s">Vinyl, LP, Album</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 5: STATISTIK ============ -->
+<p class="screen-label">Statistik</p>
+<div class="phone">
+  <div class="content">
+    <div style="padding: 16px 16px 0;">
+      <h2 style="font-size: 22px; font-weight: 700;">Statistik</h2>
+    </div>
+    <div class="stat-cards">
+      <div class="stat-card green">
+        <div class="num">12</div>
+        <div class="lbl">Sammlung</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="num">5</div>
+        <div class="lbl">Wunschliste</div>
+      </div>
+      <div class="stat-card brown">
+        <div class="num">2</div>
+        <div class="lbl">Archiv</div>
+      </div>
+    </div>
+
+    <div class="capacity-card">
+      <div class="capacity-header">
+        <span class="t">Kapazitaet</span>
+        <span>17 / 500</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width: 3.4%;"></div>
+      </div>
+    </div>
+
+    <div class="bar-card">
+      <div class="section-title">Genres</div>
+      <div class="bar-row">
+        <span class="bar-label">Rock</span>
+        <div class="bar-track"><div class="bar-fill gold" style="width:100%"></div></div>
+        <span class="bar-count">6</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Jazz</span>
+        <div class="bar-track"><div class="bar-fill gold" style="width:50%"></div></div>
+        <span class="bar-count">3</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Klassik</span>
+        <div class="bar-track"><div class="bar-fill gold" style="width:33%"></div></div>
+        <span class="bar-count">2</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Electronic</span>
+        <div class="bar-track"><div class="bar-fill gold" style="width:17%"></div></div>
+        <span class="bar-count">1</span>
+      </div>
+    </div>
+
+    <div class="bar-card">
+      <div class="section-title">Jahrzehnte</div>
+      <div class="bar-row">
+        <span class="bar-label">1970er</span>
+        <div class="bar-track"><div class="bar-fill brown" style="width:100%"></div></div>
+        <span class="bar-count">5</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">1960er</span>
+        <div class="bar-track"><div class="bar-fill brown" style="width:60%"></div></div>
+        <span class="bar-count">3</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">1980er</span>
+        <div class="bar-track"><div class="bar-fill brown" style="width:40%"></div></div>
+        <span class="bar-count">2</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">1950er</span>
+        <div class="bar-track"><div class="bar-fill brown" style="width:40%"></div></div>
+        <span class="bar-count">2</span>
+      </div>
+    </div>
+    <div style="height: 16px;"></div>
+  </div>
+  <div class="bottomnav">
+    <div class="nav-item">
+      <span class="nav-icon">&#128191;</span>
+      <span>Sammlung</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#10084;</span>
+      <span>Wunschliste</span>
+    </div>
+    <div class="nav-item active">
+      <span class="nav-icon">&#128202;</span>
+      <span>Statistik</span>
+    </div>
+  </div>
+</div>
+
+<div style="height: 40px;"></div>
+<p style="color: #666; font-size: 12px; text-align: center;">Opa's Vinyl-Sammlung - App Vorschau<br>Die echte App hat Discogs-Coverbilder statt Platzhalter</p>
+<div style="height: 20px;"></div>
+
+</body>
+</html>
