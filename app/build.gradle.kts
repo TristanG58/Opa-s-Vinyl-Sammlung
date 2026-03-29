@@ -92,9 +92,13 @@ dependencies {
     implementation(libs.camera.lifecycle)
     implementation(libs.camera.view)
 
-    // ML Kit Barcode
+    // ML Kit Barcode & Text Recognition
     implementation(libs.mlkit.barcode)
+    implementation(libs.mlkit.text)
 
     // Serialization
     implementation(libs.serialization.json)
+
+    // Coroutines Play Services (for ML Kit .await())
+    implementation(libs.coroutines.play.services)
 }

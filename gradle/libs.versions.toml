@@ -9,10 +9,12 @@ okhttp = "4.12.0"
 coil = "2.7.0"
 camerax = "1.4.1"
 mlkit-barcode = "17.3.0"
+mlkit-text = "16.0.1"
 compose-bom = "2025.01.01"
 navigation = "2.8.5"
 hilt-navigation = "1.2.0"
 serialization = "1.7.3"
+coroutines-play = "1.8.1"
 core-ktx = "1.15.0"
 lifecycle = "2.8.7"
 activity-compose = "1.9.3"
@@ -62,9 +64,11 @@ camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "
 
 # ML Kit
 mlkit-barcode = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit-barcode" }
+mlkit-text = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkit-text" }
 
 # Serialization
 serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutines-play" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
