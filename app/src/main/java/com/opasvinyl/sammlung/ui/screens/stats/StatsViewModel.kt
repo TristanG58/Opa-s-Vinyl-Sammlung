@@ -17,6 +17,7 @@ data class StatsUiState(
     val ownedCount: Int = 0,
     val wishlistCount: Int = 0,
     val archivedCount: Int = 0,
+    val totalValue: Double = 0.0,
     val genreStats: List<GenreStat> = emptyList(),
     val decadeStats: List<DecadeStat> = emptyList(),
     val isLoading: Boolean = true
@@ -40,6 +41,7 @@ class StatsViewModel @Inject constructor(
                 ownedCount = repository.getCountByStatus(RecordStatus.OWNED),
                 wishlistCount = repository.getCountByStatus(RecordStatus.WISHLIST),
                 archivedCount = repository.getCountByStatus(RecordStatus.ARCHIVED),
+                totalValue = repository.getTotalCollectionValue(),
                 genreStats = repository.getGenreStats(),
                 decadeStats = repository.getDecadeStats(),
                 isLoading = false

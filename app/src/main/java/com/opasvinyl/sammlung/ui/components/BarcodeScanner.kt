@@ -2,6 +2,8 @@ package com.opasvinyl.sammlung.ui.components
 
 import android.Manifest
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -12,9 +14,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +39,8 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.opasvinyl.sammlung.ui.theme.VinylBrown
+import com.opasvinyl.sammlung.ui.theme.VinylGold
 import java.util.concurrent.Executors
 
 @Composable
@@ -45,28 +51,65 @@ fun BarcodeScanner(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var hasCameraPermission by remember { mutableStateOf(false) }
+    var permissionDenied by remember { mutableStateOf(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
 
-    // Check permission
+    // Check if already granted
     LaunchedEffect(Unit) {
         hasCameraPermission = ContextCompat.checkSelfPermission(
             context, Manifest.permission.CAMERA
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
     }
 
+    // Permission launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasCameraPermission = granted
+        if (!granted) permissionDenied = true
+    }
+
+    // Auto-request permission if not granted
+    LaunchedEffect(hasCameraPermission) {
+        if (!hasCameraPermission && !permissionDenied) {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
     if (!hasCameraPermission) {
         Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(32.dp)
+            ) {
                 Text(
                     "Kamera-Berechtigung wird benötigt",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Bitte erlaube den Kamera-Zugriff in den Einstellungen",
+                    "Damit der Barcode-Scanner funktioniert, muss die Kamera erlaubt werden.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Spacer(Modifier.height(16.dp))
+                Button(
+                    onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = VinylGold,
+                        contentColor = VinylBrown
+                    )
+                ) {
+                    Text("Kamera erlauben")
+                }
+                if (permissionDenied) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Berechtigung wurde abgelehnt. Bitte erlaube die Kamera in den App-Einstellungen.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
         return

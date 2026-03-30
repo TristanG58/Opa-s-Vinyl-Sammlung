@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "DISCOGS_TOKEN", "\"NtClzBOwDWtWOOtpoDVxBChXkDuqVjLScNgwmAox\"")
-        buildConfigField("Int", "MAX_RECORDS", "500")
+        buildConfigField("int", "MAX_RECORDS", "500")
     }
 
     buildTypes {
@@ -53,6 +53,7 @@ dependencies {
     // Core
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.activity.compose)
 
@@ -91,9 +92,13 @@ dependencies {
     implementation(libs.camera.lifecycle)
     implementation(libs.camera.view)
 
-    // ML Kit Barcode
+    // ML Kit Barcode & Text Recognition
     implementation(libs.mlkit.barcode)
+    implementation(libs.mlkit.text)
 
     // Serialization
     implementation(libs.serialization.json)
+
+    // Coroutines Play Services (for ML Kit .await())
+    implementation(libs.coroutines.play.services)
 }

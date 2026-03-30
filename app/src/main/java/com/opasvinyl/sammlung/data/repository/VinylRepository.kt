@@ -57,6 +57,8 @@ class VinylRepository @Inject constructor(
 
     suspend fun getDecadeStats(): List<DecadeStat> = dao.getDecadeStats()
 
+    suspend fun getTotalCollectionValue(): Double = dao.getTotalCollectionValue()
+
     // === Discogs API ===
 
     suspend fun searchDiscogsByBarcode(barcode: String): Result<List<DiscogsSearchResult>> {
@@ -119,7 +121,9 @@ class VinylRepository @Inject constructor(
             condition = RecordCondition.NOT_GRADED,
             notes = null,
             status = status,
-            country = release.country
+            country = release.country,
+            lowestPrice = release.lowestPrice,
+            numForSale = release.numForSale
         )
 
         val tracks = release.tracklist.map { t ->

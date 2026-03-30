@@ -25,6 +25,10 @@ data class VinylRecord(
     val notes: String? = null,
     val status: RecordStatus = RecordStatus.OWNED,
     val country: String? = null,
+    val lowestPrice: Double? = null,
+    val medianPrice: Double? = null,
+    val highestPrice: Double? = null,
+    val numForSale: Int? = null,
     val dateAdded: Long = System.currentTimeMillis(),
     val dateModified: Long = System.currentTimeMillis()
 )

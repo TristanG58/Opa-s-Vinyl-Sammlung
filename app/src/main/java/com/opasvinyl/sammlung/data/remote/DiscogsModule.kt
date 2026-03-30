@@ -71,7 +71,8 @@ object AppModule {
             context,
             VinylDatabase::class.java,
             "vinyl_database"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

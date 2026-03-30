@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.opasvinyl.sammlung.ui.screens.add.AddRecordScreen
 import com.opasvinyl.sammlung.ui.screens.detail.DetailScreen
 import com.opasvinyl.sammlung.ui.screens.library.LibraryScreen
+import com.opasvinyl.sammlung.ui.screens.photo.PhotoRecognitionScreen
 import com.opasvinyl.sammlung.ui.screens.search.SearchScreen
 import com.opasvinyl.sammlung.ui.screens.stats.StatsScreen
 import com.opasvinyl.sammlung.ui.screens.wishlist.WishlistScreen
@@ -34,6 +35,7 @@ object Routes {
     const val ADD = "add"
     const val SEARCH = "search"
     const val SEARCH_BARCODE = "search?barcode={barcode}"
+    const val PHOTO_RECOGNITION = "photo_recognition"
 
     fun detail(recordId: Long) = "detail/$recordId"
     fun searchWithBarcode(barcode: String) = "search?barcode=$barcode"
@@ -82,8 +84,19 @@ fun NavGraph(
             AddRecordScreen(
                 onBack = { navController.popBackStack() },
                 onSearchDiscogs = { navController.navigate(Routes.SEARCH) },
+                onPhotoRecognition = { navController.navigate(Routes.PHOTO_RECOGNITION) },
                 onRecordAdded = { id ->
                     navController.popBackStack()
+                    navController.navigate(Routes.detail(id))
+                }
+            )
+        }
+
+        composable(Routes.PHOTO_RECOGNITION) {
+            PhotoRecognitionScreen(
+                onBack = { navController.popBackStack() },
+                onRecordSaved = { id ->
+                    navController.popBackStack(Routes.ADD, inclusive = true)
                     navController.navigate(Routes.detail(id))
                 }
             )

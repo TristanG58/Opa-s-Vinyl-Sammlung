@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -40,6 +41,7 @@ import com.opasvinyl.sammlung.ui.theme.VinylGold
 fun AddRecordScreen(
     onBack: () -> Unit,
     onSearchDiscogs: () -> Unit,
+    onPhotoRecognition: () -> Unit,
     onRecordAdded: (Long) -> Unit,
     viewModel: AddRecordViewModel = hiltViewModel()
 ) {
@@ -69,17 +71,36 @@ fun AddRecordScreen(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Discogs search buttons
+            // Photo recognition - PRIMARY ACTION
             Text(
-                "Automatisch suchen",
+                "Cover fotografieren",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.height(8.dp))
 
             Button(
-                onClick = onSearchDiscogs,
-                modifier = Modifier.fillMaxWidth(),
+                onClick = onPhotoRecognition,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(72.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = VinylGold, contentColor = VinylBrown)
+            ) {
+                Icon(Icons.Default.CameraAlt, null, modifier = Modifier.padding(end = 8.dp))
+                Text("Foto aufnehmen & erkennen", style = MaterialTheme.typography.titleMedium)
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // Other search options
+            Text(
+                "Oder anders suchen",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = onSearchDiscogs,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.Search, null, modifier = Modifier.padding(end = 8.dp))
                 Text("Auf Discogs suchen")
@@ -88,10 +109,7 @@ fun AddRecordScreen(
             Spacer(Modifier.height(8.dp))
 
             OutlinedButton(
-                onClick = {
-                    // Navigate to search with barcode scanner
-                    onSearchDiscogs()
-                },
+                onClick = onSearchDiscogs,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.QrCodeScanner, null, modifier = Modifier.padding(end = 8.dp))
