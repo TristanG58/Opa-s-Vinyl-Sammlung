@@ -84,6 +84,39 @@ fun StatsScreen(
             )
         }
 
+        // Collection value
+        if (uiState.totalValue > 0) {
+            Spacer(Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                colors = CardDefaults.cardColors(containerColor = VinylGold)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "Sammlungswert",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = VinylBrown
+                    )
+                    Text(
+                        "%.2f €".format(uiState.totalValue),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = VinylBrown
+                    )
+                    Text(
+                        "basierend auf günstigstem Discogs-Preis",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = VinylBrown
+                    )
+                }
+            }
+        }
+
         Spacer(Modifier.height(16.dp))
 
         // Capacity bar

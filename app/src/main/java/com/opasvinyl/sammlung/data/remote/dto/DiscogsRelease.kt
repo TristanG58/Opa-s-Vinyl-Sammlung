@@ -18,7 +18,18 @@ data class DiscogsRelease(
     val identifiers: List<DiscogsIdentifier> = emptyList(),
     @SerialName("artists")
     val artists: List<DiscogsArtist> = emptyList(),
-    val notes: String? = null
+    val notes: String? = null,
+    @SerialName("lowest_price")
+    val lowestPrice: Double? = null,
+    @SerialName("num_for_sale")
+    val numForSale: Int? = null,
+    val community: DiscogsCommunity? = null
+)
+
+@Serializable
+data class DiscogsCommunity(
+    val have: Int = 0,
+    val want: Int = 0
 )
 
 @Serializable

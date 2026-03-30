@@ -92,14 +92,20 @@ class PhotoRecognitionViewModel @Inject constructor(
     }
 
     private fun extractSearchQuery(fullText: String): String {
-        // Take the first meaningful lines as search query
-        // Vinyl covers typically have artist name and album title prominently
+        // Filter out noise and take the most meaningful lines
+        // Vinyl covers typically have artist name and album title as the largest text
         val lines = fullText.lines()
             .map { it.trim() }
-            .filter { it.length > 2 }
-            .take(3)
+            .filter { line ->
+                line.length > 2 &&
+                !line.all { it.isDigit() || it == '.' || it == ',' } && // skip pure numbers
+                !line.contains("©") && // skip copyright
+                !line.contains("℗") &&
+                !line.matches(Regex("^[A-Z]{2,4}[- ]?\\d+.*")) // skip catalog numbers like "CBS 123"
+            }
+            .take(2) // Artist + Album title is usually enough
 
-        return lines.joinToString(" ").take(100)
+        return lines.joinToString(" ").take(80)
     }
 
     fun updateSearchQuery(query: String) {

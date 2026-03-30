@@ -1,5 +1,6 @@
 package com.opasvinyl.sammlung.ui.screens.photo
 
+import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -47,14 +48,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -75,6 +80,20 @@ fun PhotoRecognitionScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    // Camera permission state
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasCameraPermission = granted
+    }
+
     LaunchedEffect(uiState.savedRecordId) {
         uiState.savedRecordId?.let { onRecordSaved(it) }
     }
@@ -87,15 +106,36 @@ fun PhotoRecognitionScreen(
     }
 
     // Camera capture
-    val cameraUri = androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf<Uri?>(null)
-    }
+    val cameraUri = remember { mutableStateOf<Uri?>(null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success: Boolean ->
         if (success) {
             cameraUri.value?.let { viewModel.onPhotoSelected(it) }
+        }
+    }
+
+    fun launchCamera() {
+        val photoFile = File(context.cacheDir, "vinyl_photo_${System.currentTimeMillis()}.jpg")
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            photoFile
+        )
+        cameraUri.value = uri
+        cameraLauncher.launch(uri)
+    }
+
+    // Pending camera launch after permission grant
+    var pendingCameraLaunch by remember { mutableStateOf(false) }
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasCameraPermission = granted
+        if (granted && pendingCameraLaunch) {
+            pendingCameraLaunch = false
+            launchCamera()
         }
     }
 
@@ -120,7 +160,6 @@ fun PhotoRecognitionScreen(
         ) {
             when (uiState.step) {
                 PhotoStep.CAPTURE -> {
-                    // Big photo buttons
                     Spacer(Modifier.height(32.dp))
 
                     Text(
@@ -134,14 +173,12 @@ fun PhotoRecognitionScreen(
 
                     Button(
                         onClick = {
-                            val photoFile = File(context.cacheDir, "vinyl_photo_${System.currentTimeMillis()}.jpg")
-                            val uri = FileProvider.getUriForFile(
-                                context,
-                                "${context.packageName}.fileprovider",
-                                photoFile
-                            )
-                            cameraUri.value = uri
-                            cameraLauncher.launch(uri)
+                            if (hasCameraPermission) {
+                                launchCamera()
+                            } else {
+                                pendingCameraLaunch = true
+                                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -151,11 +188,7 @@ fun PhotoRecognitionScreen(
                             contentColor = VinylBrown
                         )
                     ) {
-                        Icon(
-                            Icons.Default.CameraAlt,
-                            null,
-                            modifier = Modifier.size(32.dp)
-                        )
+                        Icon(Icons.Default.CameraAlt, null, modifier = Modifier.size(32.dp))
                         Spacer(Modifier.width(12.dp))
                         Text("Foto aufnehmen", style = MaterialTheme.typography.titleMedium)
                     }
@@ -172,11 +205,7 @@ fun PhotoRecognitionScreen(
                             .fillMaxWidth()
                             .height(80.dp)
                     ) {
-                        Icon(
-                            Icons.Default.PhotoLibrary,
-                            null,
-                            modifier = Modifier.size(32.dp)
-                        )
+                        Icon(Icons.Default.PhotoLibrary, null, modifier = Modifier.size(32.dp))
                         Spacer(Modifier.width(12.dp))
                         Text("Aus Galerie wählen", style = MaterialTheme.typography.titleMedium)
                     }
@@ -188,7 +217,6 @@ fun PhotoRecognitionScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            // Show the photo
                             if (uiState.photoUri != null) {
                                 AsyncImage(
                                     model = uiState.photoUri,
@@ -221,7 +249,18 @@ fun PhotoRecognitionScreen(
                         Spacer(Modifier.height(8.dp))
                     }
 
-                    // Editable search query from recognized text
+                    // Recognized text info
+                    if (uiState.recognizedText.isNotBlank()) {
+                        Text(
+                            "Erkannter Text: ${uiState.recognizedText.take(80)}…",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2
+                        )
+                        Spacer(Modifier.height(4.dp))
+                    }
+
+                    // Editable search query
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -229,7 +268,7 @@ fun PhotoRecognitionScreen(
                         OutlinedTextField(
                             value = uiState.searchQuery,
                             onValueChange = { viewModel.updateSearchQuery(it) },
-                            label = { Text("Erkannter Text") },
+                            label = { Text("Suchbegriff") },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -243,7 +282,6 @@ fun PhotoRecognitionScreen(
 
                     Spacer(Modifier.height(4.dp))
 
-                    // Retry button
                     OutlinedButton(
                         onClick = { viewModel.retakePhoto() },
                         modifier = Modifier.fillMaxWidth()

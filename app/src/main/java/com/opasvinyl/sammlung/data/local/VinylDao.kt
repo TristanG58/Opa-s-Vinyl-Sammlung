@@ -64,6 +64,9 @@ interface VinylDao {
     @Query("SELECT (year / 10) * 10 as decade, COUNT(*) as count FROM vinyl_records WHERE year IS NOT NULL AND status = 'OWNED' GROUP BY decade ORDER BY decade")
     suspend fun getDecadeStats(): List<DecadeStat>
 
+    @Query("SELECT COALESCE(SUM(lowestPrice), 0.0) FROM vinyl_records WHERE status = 'OWNED' AND lowestPrice IS NOT NULL")
+    suspend fun getTotalCollectionValue(): Double
+
     // === Tracks ===
 
     @Query("SELECT * FROM tracks WHERE recordId = :recordId ORDER BY position")

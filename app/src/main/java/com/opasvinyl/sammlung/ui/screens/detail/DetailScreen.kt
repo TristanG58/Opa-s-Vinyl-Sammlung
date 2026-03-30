@@ -280,6 +280,32 @@ fun DetailScreen(
                 }
                 DetailRow("Status", statusText)
 
+                // Marketplace / Pricing
+                if (record.lowestPrice != null || record.numForSale != null) {
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(Modifier.height(12.dp))
+
+                    Text(
+                        "Marktwert (Discogs)",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    if (record.lowestPrice != null) {
+                        DetailRow("Günstigster Preis", "%.2f €".format(record.lowestPrice))
+                    }
+                    if (record.medianPrice != null) {
+                        DetailRow("Median-Preis", "%.2f €".format(record.medianPrice))
+                    }
+                    if (record.highestPrice != null) {
+                        DetailRow("Höchster Preis", "%.2f €".format(record.highestPrice))
+                    }
+                    if (record.numForSale != null && record.numForSale > 0) {
+                        DetailRow("Angebote", "${record.numForSale} Stück")
+                    }
+                }
+
                 // Tracklist
                 if (uiState.tracks.isNotEmpty()) {
                     Spacer(Modifier.height(16.dp))

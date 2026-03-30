@@ -9,7 +9,7 @@ import com.opasvinyl.sammlung.data.local.entity.VinylRecord
 
 @Database(
     entities = [VinylRecord::class, Track::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
